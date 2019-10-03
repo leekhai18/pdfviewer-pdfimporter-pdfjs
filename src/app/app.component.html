@@ -10,8 +10,7 @@
 
 <h1>PDF.js 'Hello, world!' example</h1>
 <div class="pdf-container">
-  <canvas *ngFor="let item of numPagesArray" id="the-canvas"></canvas>
+  <canvas *ngFor="let item of numPagesArray; let i=index" id="the-canvas" (click)="click(i)"></canvas>
 </div>
-
 
 <router-outlet></router-outlet>

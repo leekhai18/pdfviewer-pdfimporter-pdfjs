@@ -1,5 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf.js';
+import { MatDialog } from '@angular/material/dialog';
+import { DetailViewerComponent } from './detail-viewer/detail-viewer.component';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +12,9 @@ export class AppComponent implements OnInit {
 
   title = 'pdf-viewer';
   numPagesArray: Array<number>;
+  pdfSrc: any;
 
-  constructor(private _cdf: ChangeDetectorRef) { }
+  constructor(private _cdf: ChangeDetectorRef, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjsWorker.js';
@@ -28,6 +31,7 @@ export class AppComponent implements OnInit {
       };
 
       reader.onload = (e: any) => {
+        this.pdfSrc = e.target.result;
         this.load(e.target.result);
         console.log(e.target.result);
       };
@@ -47,7 +51,7 @@ export class AppComponent implements OnInit {
       this._cdf.detectChanges();
 
       for (let i = 0; i < pdf.numPages; i++) {
-        this.loadPage(pdf, i + 1);
+        this.renderPage(pdf, i + 1);
       }
 
     }, (reason) => {
@@ -55,13 +59,13 @@ export class AppComponent implements OnInit {
     });
   }
 
-  loadPage(pdf, pageNumber) {
+  renderPage(pdf, pageNumber) {
     pdf.getPage(pageNumber).then((page) => {
       console.log('-----------------------Page loaded');
 
       // Recompute viewport follow expected width
       let viewport = page.getViewport({ scale: 1 });
-      const expectedWidth = 400;
+      const expectedWidth = 200;
       const scale = expectedWidth / viewport.width;
       viewport = page.getViewport({ scale: scale });
 
@@ -82,4 +86,19 @@ export class AppComponent implements OnInit {
       });
     });
   }
+
+  click(pageIndex: number) {
+    const dialogRef = this.dialog.open(DetailViewerComponent, {
+      width: 'auto',
+      height: 'auto',
+      maxHeight: '',
+      maxWidth: '',
+      data: { src: this.pdfSrc, page: pageIndex + 1 }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
 }
