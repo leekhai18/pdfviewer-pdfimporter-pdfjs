@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   constructor(private _cdf: ChangeDetectorRef, public dialog: MatDialog) { }
 
   ngOnInit(): void {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjsWorker.js';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'http://mozilla.github.io/pdf.js/build/pdf.worker.js';
   }
 
   onFileSelected() {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf.js';
 
@@ -7,7 +7,7 @@ import * as pdfjsLib from 'pdfjs-dist/build/pdf.js';
   templateUrl: './detail-viewer.component.html',
   styleUrls: ['./detail-viewer.component.scss']
 })
-export class DetailViewerComponent implements OnInit {
+export class DetailViewerComponent implements OnInit, OnDestroy {
 
   private pageNum = 1;
   private pageRendering = false;
@@ -19,8 +19,12 @@ export class DetailViewerComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<DetailViewerComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
-      this.pageNum = data.page;
-    }
+    this.pageNum = data.page;
+  }
+
+  ngOnDestroy(): void {
+    this.pdfDoc.destroy();
+  }
 
   ngOnInit() {
     this.canvas = document.querySelector('#viewer') as HTMLCanvasElement;
